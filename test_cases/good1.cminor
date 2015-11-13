@@ -1,0 +1,14 @@
+a: array [5] integer;
+a: array [5] integer = {1,2,3,4,5};
+x: integer;
+y: integer = 123;
+b: boolean = false;
+c: char    = 'q';
+s: string  = "hello cminor\n";
+b: boolean;
+x: integer = 3;
+y: integer = 5;
+b: boolean = x<y;
+
+f: integer = 0;
+c: char = '\a';

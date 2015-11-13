@@ -1,0 +1,15 @@
+main: function integer () = {
+	if(3!=3)
+		print "Wow this is scary";
+	
+	if(0>1)
+		print "I think this qualifies as some sort of problem";
+	
+	if(1-==1)
+	{
+			print "The laws of math have lost their meaning";
+			return 1;
+	}
+	
+	return 0;
+}

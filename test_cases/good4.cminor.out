@@ -1,0 +1,13 @@
+main: function integer (argv: array[] string, argc: integer) = {
+	i: integer=0;
+
+	j: integer=1;
+
+	if(i==j)
+	{
+			print i;
+			return j;
+	}
+	
+	return i;
+}

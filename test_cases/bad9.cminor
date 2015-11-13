@@ -1,0 +1,9 @@
+main: function integer () = {
+	if ( x == true && y == false )
+		print "good";
+	else
+		print "no good";
+	else
+		print "what is happening?"
+	return 0;
+}

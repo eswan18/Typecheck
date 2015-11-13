@@ -1,0 +1,11 @@
+printarray: function void ( a: array [] integer, size: integer ) = {
+	i: integer;
+	for( i=0;i<size;i++) {
+		print a[i], "\n";
+	}
+	a[3] = call(a[2]) + call(1,2,run12);
+}
+
+a: char = 'a';
+str: string = "string";
+impossible: integer = str + a;

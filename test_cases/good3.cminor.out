@@ -1,0 +1,9 @@
+main: function integer (argv: array[] string, argc: integer) = {
+	i: integer;
+
+	for(i=0;i<40;i++)
+	{
+			print i;
+	}
+	return 0;
+}

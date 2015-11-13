@@ -1,0 +1,13 @@
+printarray: function void (a: array[] integer, size: integer) = {
+	i: integer;
+
+	for(i=0;i<size;i++)
+	{
+			print a[i],"
+";
+	}
+	a[3]=1;
+}
+a: character='a';
+str: string="string";
+impossible: integer=str+a;
