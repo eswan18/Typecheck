@@ -1,7 +1,7 @@
 all: cminor
 
-cminor: token.o lex.yy.o main.o parser.tab.o expr.o decl.o stmt.o type.o param_list.o
-	gcc parser.tab.o token.o expr.o decl.o stmt.o type.o param_list.o lex.yy.o main.o -o cminor -Wall -g
+cminor: token.o lex.yy.o main.o parser.tab.o expr.o decl.o stmt.o type.o param_list.o symbol.o
+	gcc parser.tab.o token.o expr.o decl.o stmt.o type.o param_list.o symbol.o lex.yy.o main.o -o cminor -Wall -g
 main.o: main.c parser.tab.h token.h
 	gcc -c main.c -Wall -g
 token.o: token.c token.h parser.tab.h
@@ -16,6 +16,8 @@ decl.o: decl.c decl.h
 	gcc -c decl.c -Wall -g
 expr.o: expr.c expr.h
 	gcc -c expr.c -Wall -g
+symbol.o: symbol.c symbol.h type.h
+	gcc -c symbol.c -Wall -g
 parser.tab.o: parser.tab.c parser.tab.h decl.h expr.h stmt.h param_list.h type.h
 	gcc -c parser.tab.c -Wall -g
 lex.yy.o: lex.yy.c parser.tab.h token.h
