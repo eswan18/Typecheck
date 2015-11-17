@@ -2,6 +2,9 @@
 #include "token.h"
 #include "decl.h"
 #include "parser.tab.h"
+#include "scope.h"
+
+int error_count = 0;
 
 extern FILE *yyin;
 extern char *yytext;
@@ -9,6 +12,7 @@ extern int yyparse();
 extern struct decl *parser_result;
 extern int yylex();
 extern void convertString(char *);
+extern struct scope_table *global_scope_table;
 
 int scan(char *filename);
 int parse(char *filename);
@@ -33,6 +37,8 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(option,"-resolve") == 0) {
 		return resolve(filename);
 	} else if (strcmp(option,"-typecheck") == 0) {
+		if(resolve(filename) == 1)
+			return 1;
 		return typecheck(filename);
 	} else {
 		fprintf(stderr,"error: illegal option provided\nPlease choose from 'scan', 'parse', 'resolve', or 'typecheck'\n");
@@ -92,8 +98,14 @@ int resolve(char *filename) {
 		return 1;
 	}
 	fclose(yyin);
+
+	//do name resolution
+	scope_enter();
+	decl_resolve(parser_result);
+	scope_exit();
 	
-	//use parser_result
+	if(error_count > 0)
+		return 1;
 	return 0;
 }
 

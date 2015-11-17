@@ -1,6 +1,8 @@
 #include <stdlib.h>
-#include "decl.h"
 #include <string.h>
+#include "decl.h"
+#include "symbol.h"
+#include "scope.h"
 
 struct decl *decl_create(char *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next) {
 	struct decl *decl = malloc(sizeof(struct decl));
@@ -15,9 +17,8 @@ struct decl *decl_create(char *name, struct type *t, struct expr *v, struct stmt
 }
 
 void decl_print(struct decl *d, int indent) {
-	if(!d) {
+	if(!d)
 		return;
-	}
 	int i;
 	for(i=0;i<indent;i++)
 		printf("\t");
@@ -39,4 +40,31 @@ void decl_print(struct decl *d, int indent) {
 	}
 	printf("\n");
 	decl_print(d->next,indent);
+}
+
+void decl_resolve(struct decl *d) {
+	if (!d)
+		return;
+	//Check if the name is already defined in the local scope
+	if (scope_lookup_local(d->name)) {
+		fprintf(stderr,"Error: variable %s already defined in current scope\n",d->name);
+		exit(1);
+	}
+	//Create the symbol
+	struct symbol *symbol = 0;
+	if (scope_level() == 0)
+		symbol = symbol_create(SYMBOL_GLOBAL,d->type,d->name);
+	else
+		symbol = symbol_create(SYMBOL_LOCAL,d->type,d->name);
+	//Bind it and resolve internal expressions
+	scope_bind(d->name, symbol);
+	expr_resolve(d->value);
+	//If it's a function, enter a new scope and resolve the internal statement
+	if (d->code) {
+		scope_enter();
+		param_list_resolve(d->type->params,0);
+		stmt_resolve(d->code);
+		scope_exit();
+	}
+	decl_resolve(d->next);
 }

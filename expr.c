@@ -1,6 +1,9 @@
 #include <stdlib.h>
-#include "expr.h"
 #include <string.h>
+#include "expr.h"
+#include "scope.h"
+
+extern int error_count;
 
 struct expr *expr_create( expr_t kind, struct expr *left, struct expr *right ) {
 	struct expr *expr = malloc(sizeof(struct expr));
@@ -150,5 +153,35 @@ void expr_pretty_print(struct expr *e) {
 		case EXPR_STRING_LITERAL:
 			printf("\"%s\"",e->string_literal);
 			break;
+	}
+}
+
+void expr_resolve(struct expr *e) {
+	if(!e)
+		return;
+	expr_resolve(e->left);
+	expr_resolve(e->right);
+	if(e->kind == EXPR_NAME) {
+		struct symbol *s = scope_lookup(e->name);
+		if(s) {
+			e->symbol = s;
+			printf("%s resolves to ",e->name);
+			switch(s->kind) {
+				case SYMBOL_LOCAL:
+					printf("local %d\n",s->which);
+					break;
+				case SYMBOL_GLOBAL:
+					printf("global %s\n",s->name);
+					break;
+				case SYMBOL_PARAM:
+					printf("parameter %d\n",s->which);
+					break;
+				default:
+					printf("SHOULDN'T DEFAULT\n");
+			}
+		} else {
+			printf("Variable %s is undefined\n",e->name);
+			error_count++;
+		}
 	}
 }

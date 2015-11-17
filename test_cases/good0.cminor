@@ -1,4 +1,5 @@
 this: function void () = {
 	x: char = '\n';
+	x = 3;
 	return;
 }
