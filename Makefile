@@ -1,9 +1,13 @@
 all: cminor
 
-cminor: token.o lex.yy.o main.o parser.tab.o expr.o decl.o stmt.o type.o param_list.o symbol.o
-	gcc parser.tab.o token.o expr.o decl.o stmt.o type.o param_list.o symbol.o lex.yy.o main.o -o cminor -Wall -g
+cminor: token.o lex.yy.o main.o parser.tab.o expr.o decl.o stmt.o type.o param_list.o symbol.o hash_table.o scope.o
+	gcc parser.tab.o token.o expr.o decl.o stmt.o type.o param_list.o symbol.o lex.yy.o main.o hash_table.o scope.o -o cminor -Wall -g
 main.o: main.c parser.tab.h token.h
 	gcc -c main.c -Wall -g
+scope.o: scope.c scope.h hash_table.h
+	gcc -c scope.c -Wall -g
+hash_table.o: hash_table.h hash_table.c
+	gcc -c hash_table.c -Wall -g
 token.o: token.c token.h parser.tab.h
 	gcc -c token.c -Wall -g
 param_list.o: param_list.c param_list.h
