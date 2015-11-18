@@ -3,6 +3,7 @@ printarray: function void ( a: array [] integer, size: integer ) = {
 	for( i=0;i<size;i++) {
 		print a[i], "\n";
 	}
+	size = 1;
 	a[3] = call(a[2]) + call(1,2,run12);
 }
 

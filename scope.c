@@ -7,8 +7,10 @@ struct scope_table *global_st = 0;
 void scope_enter() {
 	struct hash_table *h = hash_table_create(0,0);
 	struct scope_table *st = malloc(sizeof(struct scope_table));
-	st -> hash_table = h;
-	st -> next = global_st;
+	st->hash_table = h;
+	st->next = global_st;
+	st->param_count = 0;
+	st->local_count = 0;
 	global_st = st;
 }
 
@@ -30,10 +32,31 @@ int scope_level() {
 	return count;
 }
 
+int scope_symbol_count(symbol_t st) {
+	int count;
+	switch (st) {
+		case SYMBOL_PARAM:
+			count = global_st->param_count;
+			break;
+		case SYMBOL_LOCAL:
+			count = global_st->local_count;
+			break;
+		default:
+			fprintf(stderr,"You should not ask for the number of global variables\n");
+	}
+	return count;
+}
+
 void scope_bind(const char *name, struct symbol *s) {
 	if(!hash_table_insert(global_st->hash_table, name, s)) {
 		fprintf(stderr,"Unable to add variable %s to the current scope table.\n",name);
 		exit(1);
+	}
+	if(s->kind == SYMBOL_LOCAL) {
+		global_st->local_count++;
+	}
+	if(s->kind == SYMBOL_PARAM) {
+		global_st->param_count++;
 	}
 }
 

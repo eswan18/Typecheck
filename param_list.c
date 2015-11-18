@@ -24,7 +24,7 @@ void param_list_print(struct param_list *a) {
 	param_list_print(a->next);
 }
 
-void param_list_resolve(struct param_list *a, int count) {
+void param_list_resolve(struct param_list *a) {
 	if (!a)
 		return;
 	//Check if the name is already defined in the local scope
@@ -34,8 +34,8 @@ void param_list_resolve(struct param_list *a, int count) {
 	}
 	//Create and bind the symbol
 	struct symbol *symbol = symbol_create(SYMBOL_PARAM,a->type,a->name);
-	symbol->which = count;
+	symbol->which = scope_symbol_count(SYMBOL_PARAM)+1;
 	scope_bind(a->name,symbol);
 		
-	param_list_resolve(a->next, count+1);
+	param_list_resolve(a->next);
 }

@@ -54,15 +54,17 @@ void decl_resolve(struct decl *d) {
 	struct symbol *symbol = 0;
 	if (scope_level() == 0)
 		symbol = symbol_create(SYMBOL_GLOBAL,d->type,d->name);
-	else
+	else {
 		symbol = symbol_create(SYMBOL_LOCAL,d->type,d->name);
+		symbol->which = scope_symbol_count(SYMBOL_LOCAL)+1;
+	}
 	//Bind it and resolve internal expressions
 	scope_bind(d->name, symbol);
 	expr_resolve(d->value);
 	//If it's a function, enter a new scope and resolve the internal statement
 	if (d->code) {
 		scope_enter();
-		param_list_resolve(d->type->params,0);
+		param_list_resolve(d->type->params);
 		stmt_resolve(d->code);
 		scope_exit();
 	}
