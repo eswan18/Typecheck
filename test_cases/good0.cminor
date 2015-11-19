@@ -1,5 +1,9 @@
+y: integer = 4;
+
 this: function void () = {
 	x: char = '\n';
 	x = 3;
+	y:string = 4;
+	y = 4;
 	return;
 }

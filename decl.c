@@ -4,6 +4,8 @@
 #include "symbol.h"
 #include "scope.h"
 
+extern int type_error_count;
+
 struct decl *decl_create(char *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next) {
 	struct decl *decl = malloc(sizeof(struct decl));
 	char *n = malloc(sizeof(char) * 256);
@@ -69,4 +71,26 @@ void decl_resolve(struct decl *d) {
 		scope_exit();
 	}
 	decl_resolve(d->next);
+}
+
+void decl_typecheck(struct decl *d) {
+	if(d->value) {
+		struct type *value_type = expr_typecheck(d->value);
+		if(!type_compare(d->type,value_type)) {
+			printf("Type Error: cannot assign ");
+			type_print(value_type);
+			printf(" to variable of type ");
+			type_print(d->type);
+			printf("\n");
+			type_error_count++;
+		}
+	}
+	if(d->symbol->kind == SYMBOL_GLOBAL) {
+		if(!expr_is_constant(d->value)) {
+			printf("Type Error: global variables can only be assigned constant values\n");
+			type_error_count++;
+		}
+	}
+	if(d->code)
+		stmt_typecheck(d->code);
 }

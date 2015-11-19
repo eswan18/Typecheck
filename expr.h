@@ -45,7 +45,7 @@ struct expr {
 	const char *name;
 	struct symbol *symbol;
 	int literal_value;
-	const char * string_literal;
+	const char *string_literal;
 };
 
 struct expr * expr_create( expr_t kind, struct expr *left, struct expr *right );
@@ -60,5 +60,9 @@ void expr_print(struct expr *e);
 void expr_pretty_print(struct expr *e);
 
 void expr_resolve(struct expr *e);
+void expr_delete(struct expr *e);
+
+int expr_is_constant(struct expr *e);
+struct type *expr_typecheck(struct expr *e);
 
 #endif

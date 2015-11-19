@@ -4,7 +4,8 @@
 #include "parser.tab.h"
 #include "scope.h"
 
-int error_count = 0;
+int resolve_error_count = 0;
+int type_error_count = 0;
 
 extern FILE *yyin;
 extern char *yytext;
@@ -37,8 +38,6 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(option,"-resolve") == 0) {
 		return resolve(filename);
 	} else if (strcmp(option,"-typecheck") == 0) {
-		if(resolve(filename) == 1)
-			return 1;
 		return typecheck(filename);
 	} else {
 		fprintf(stderr,"error: illegal option provided\nPlease choose from 'scan', 'parse', 'resolve', or 'typecheck'\n");
@@ -104,11 +103,16 @@ int resolve(char *filename) {
 	decl_resolve(parser_result);
 	scope_exit();
 	
-	if(error_count > 0)
+	if(resolve_error_count > 0)
 		return 1;
 	return 0;
 }
 
 int typecheck(char *filename) {
+	if(resolve(filename) != 0)
+		return 1;
+	//Call decl_typecheck
+	if(type_error_count > 0)
+		return 1;
 	return 0;
 }

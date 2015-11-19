@@ -18,4 +18,5 @@ void param_list_print(struct param_list *a);
 void param_list_pretty_print(struct param_list *a);
 
 void param_list_resolve(struct param_list *a);
+
 #endif

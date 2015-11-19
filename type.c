@@ -46,3 +46,35 @@ void type_print(struct type *t) {
 			break;
 	}
 }
+
+struct type *type_copy(struct type *t) {
+	if(!t)
+		return 0;
+	struct type *new_type = malloc(sizeof(struct type));
+	new_type->kind = t->kind;
+	new_type->params = t->params;
+	new_type->subtype = type_copy(t->subtype);
+	return new_type;
+}
+
+int type_compare(struct type *a, struct type *b) {
+	if(!a && !b)
+		return 1;
+	if(!a || !b)
+		return 0;
+	if(a->kind != b->kind)
+		return 0;
+	//The following may be necessary but I'm not sure
+	/*if(a->params != b->params)
+		return 0;
+	return(type_compare(a->subtype,b->subtype));*/
+	return 1;
+}
+
+void type_delete(struct type *t) {
+	if(!t)
+		return;
+	type_delete(t->subtype);
+	free(t);
+	return;
+}

@@ -3,7 +3,8 @@
 #include "expr.h"
 #include "scope.h"
 
-extern int error_count;
+extern int resolve_error_count;
+extern int type_error_count;
 
 struct expr *expr_create( expr_t kind, struct expr *left, struct expr *right ) {
 	struct expr *expr = malloc(sizeof(struct expr));
@@ -181,7 +182,148 @@ void expr_resolve(struct expr *e) {
 			}
 		} else {
 			printf("Variable %s is undefined\n",e->name);
-			error_count++;
+			resolve_error_count++;
 		}
 	}
+}
+
+void expr_delete(struct expr *e) {
+	if(!e)
+		return;
+	expr_delete(e->left);
+	expr_delete(e->right);
+	free((char *)e->name);
+	symbol_delete(e->symbol);
+	free((char *)e->string_literal);
+	free(e);
+}
+
+int expr_is_constant(struct expr *e) {
+	if(e->kind == EXPR_BOOLEAN_LITERAL || e->kind == EXPR_INTEGER_LITERAL || e->kind == EXPR_CHARACTER_LITERAL || e->kind == EXPR_STRING_LITERAL)
+		return 1;
+	return 0;
+}
+
+struct type *expr_typecheck(struct expr *e) {
+	if(!e)
+		return type_create(TYPE_VOID,0,0,0);
+	struct type *left = 0;
+	struct type *right = 0;
+	left = expr_typecheck(e->left);
+	right = expr_typecheck(e->right);
+	switch(e->kind) {
+		case EXPR_ASSIGN:
+			if(!type_compare(left,right)) {
+				printf("Type Error: cannot assign ");
+				type_print(right);
+				printf(" to variable of type ");
+				type_print(left);
+				printf("\n");
+				type_error_count++;
+			}
+			return left;
+		case EXPR_ADD:
+		case EXPR_SUB:
+		case EXPR_MUL:
+		case EXPR_DIV:
+		case EXPR_MOD:
+		case EXPR_EXPON:
+			if(left->kind != TYPE_INTEGER || right->kind != TYPE_INTEGER) {
+				printf("Type Error: cannot perform integer math on ");
+				type_print(left);
+				printf(" and ");
+				type_print(right);
+				printf("\n");
+				type_error_count++;
+			}
+			return type_create(TYPE_INTEGER,0,0,0);
+		case EXPR_LT:
+		case EXPR_LE:
+		case EXPR_GT:
+		case EXPR_GE:
+			if(left->kind != TYPE_INTEGER || right->kind != TYPE_INTEGER) {
+				printf("Type Error: cannot perform integer comparison between");
+				type_print(left);
+				printf(" and ");
+				type_print(right);
+				printf("\n");
+				type_error_count++;
+			}
+			return type_create(TYPE_BOOLEAN,0,0,0);
+		case EXPR_INCR:
+		case EXPR_DECR:
+			if(left->kind != TYPE_INTEGER) {
+				printf("Type Error: cannot increment or decrement ");
+				type_print(left);
+				printf("\n");
+				type_error_count++;
+			}
+			return type_create(TYPE_INTEGER,0,0,0);
+		case EXPR_NEG:
+			if(left->kind != TYPE_INTEGER) {
+				printf("Type Error: cannot perform unary negation on ");
+				type_print(left);
+				printf("\n");
+				type_error_count++;
+			}
+			return type_create(TYPE_INTEGER,0,0,0);
+		case EXPR_AND:
+		case EXPR_OR:
+			if(left->kind != TYPE_BOOLEAN || right->kind != TYPE_BOOLEAN) {
+				printf("Type Error: cannot perform boolean logic on ");
+				type_print(left);
+				printf(" and ");
+				type_print(right);
+				printf("\n");
+				type_error_count++;
+			}
+			return type_create(TYPE_BOOLEAN,0,0,0);
+		case EXPR_NOT:
+			if(left->kind != TYPE_BOOLEAN) {
+				printf("Type Error: cannot perform boolean NOT on ");
+				type_print(left);
+				printf("\n");
+				type_error_count++;
+			}
+			return type_create(TYPE_BOOLEAN,0,0,0);
+		case EXPR_EQ:
+		case EXPR_NE:
+			if(!type_compare(left,right) || left->kind == TYPE_ARRAY || right->kind == TYPE_ARRAY) {
+				printf("Type Error: cannot evaluate equality between ");
+				type_print(left);
+				printf(" and ");
+				type_print(right);
+				printf("\n");
+				type_error_count++;
+			}
+			return type_create(TYPE_BOOLEAN,0,0,0);
+		case EXPR_FUNC:
+			return left;
+		case EXPR_LIST:
+			//THINK A LOT MORE
+		case EXPR_ARRAY_DEREF:
+			if(left->kind != TYPE_ARRAY || right->kind != TYPE_INTEGER) {
+				printf("Type Error: cannot dereference an array using ");
+				type_print(left);
+				printf("[");
+				type_print(right);
+				printf("]\n");
+				type_error_count++;
+			}
+			return left->subtype;
+		case EXPR_NAME:
+			return e->symbol->type;
+		case EXPR_BOOLEAN_LITERAL:
+			return type_create(TYPE_BOOLEAN,0,0,0);
+		case EXPR_INTEGER_LITERAL:
+			return type_create(TYPE_INTEGER,0,0,0);
+		case EXPR_CHARACTER_LITERAL:
+			return type_create(TYPE_CHARACTER,0,0,0);
+		case EXPR_STRING_LITERAL:
+			return type_create(TYPE_STRING,0,0,0);
+		default:
+			fprintf(stderr,"Invalid type\n");
+			exit(1);
+	}
+	return 0;
 }

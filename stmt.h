@@ -25,10 +25,12 @@ struct stmt {
 	struct stmt *next;
 };
 
-struct stmt * stmt_create( stmt_kind_t kind, struct decl *d, struct expr *init_expr, struct expr *e, struct expr *next_expr, struct stmt *body, struct stmt *else_body );
+struct stmt * stmt_create(stmt_kind_t kind, struct decl *d, struct expr *init_expr, struct expr *e, struct expr *next_expr, struct stmt *body, struct stmt *else_body);
 void stmt_print(struct stmt *s, int indent);
 void stmt_pretty_print(struct stmt *s, int indent);
 
 void stmt_resolve(struct stmt *s);
+
+void stmt_typecheck(struct stmt *s);
 
 #endif
