@@ -81,10 +81,12 @@ void decl_typecheck(struct decl *d) {
 		struct type *value_type = expr_typecheck(d->value);
 		if(!type_compare(d->type,value_type)) {
 			printf("Type Error: cannot assign ");
+			expr_print(d->value);
+			printf(" (");
 			type_print(value_type);
-			printf(" to variable of type ");
+			printf(") to variable %s (",d->name);
 			type_print(d->type);
-			printf("\n");
+			printf(") \n");
 			type_error_count++;
 		}
 	}

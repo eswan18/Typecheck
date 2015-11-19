@@ -203,15 +203,53 @@ struct type *expr_typecheck(struct expr *e) {
 	struct type *right = 0;
 	left = expr_typecheck(e->left);
 	right = expr_typecheck(e->right);
+	struct expr *e_right = 0;
 	switch(e->kind) {
 		case EXPR_ASSIGN:
-			if(!type_compare(left,right)) {
-				printf("Type Error: cannot assign ");
-				type_print(right);
-				printf(" to variable of type ");
-				type_print(left);
-				printf("\n");
+			if(left->kind == TYPE_ARRAY) {
+				if(right->kind == TYPE_ARRAY) {
+					//if the right side is a symbol of an array, check subtypes
+					if(!type_compare(right->subtype,left->subtype)) {
+						printf("Type Error: cannot assign array of type ");
+						type_print(right->subtype);
+						printf(" to array of type ");
+						type_print(left->subtype);
+						type_error_count++;
+					}
+				} else {
+					//if the right side is an expr list, check each element
+					e_right = e->right;
+					while(e_right) {
+						if(!type_compare(left->subtype,expr_typecheck(e_right->left))) {
+							printf("Type Error: cannot assign element ");
+							expr_print(e_right->left);
+							printf(" (");
+							type_print(expr_typecheck(e_right->left));
+							printf(") to array %s of subtype ",e->left->name);
+							type_print(expr_typecheck(e->left)->subtype);
+							printf("\n");
+							type_error_count++;
+						}
+						e_right = e_right -> right;
+					}
+				}
+				return left;
+			} else if(left->kind == TYPE_FUNCTION) {
+				printf("Type Error: cannot assign anything to function %s\n",e->left->name);
 				type_error_count++;
+			} else {
+				if(!type_compare(left,right)) {
+					printf("Type Error: cannot assign ");
+					expr_print(e->right);
+					printf(" (");
+					type_print(right);
+					printf(") to variable ");
+					expr_print(e->left);
+					printf(" (");
+					type_print(left);
+					printf(") \n");
+					type_error_count++;
+				}
 			}
 			return left;
 		case EXPR_ADD:
@@ -232,17 +270,21 @@ struct type *expr_typecheck(struct expr *e) {
 				printf(")\n");
 				type_error_count++;
 			}
-			return type_create(TYPE_INTEGER,0,0,0);
+			return left;
 		case EXPR_LT:
 		case EXPR_LE:
 		case EXPR_GT:
 		case EXPR_GE:
 			if(left->kind != TYPE_INTEGER || right->kind != TYPE_INTEGER) {
-				printf("Type Error: cannot perform integer comparison between");
+				printf("Type Error: cannot perform integer comparison between ");
+				expr_print(e->left);
+				printf(" (");
 				type_print(left);
-				printf(" and ");
+				printf(") and ");
+				expr_print(e->right);
+				printf(" (");
 				type_print(right);
-				printf("\n");
+				printf(") \n");
 				type_error_count++;
 			}
 			return type_create(TYPE_BOOLEAN,0,0,0);
@@ -250,19 +292,23 @@ struct type *expr_typecheck(struct expr *e) {
 		case EXPR_DECR:
 			if(left->kind != TYPE_INTEGER) {
 				printf("Type Error: cannot increment or decrement ");
+				expr_print(e->left);
+				printf(" (");
 				type_print(left);
-				printf("\n");
+				printf(") \n");
 				type_error_count++;
 			}
-			return type_create(TYPE_INTEGER,0,0,0);
+			return left;
 		case EXPR_NEG:
 			if(left->kind != TYPE_INTEGER) {
 				printf("Type Error: cannot perform unary negation on ");
+				expr_print(e->left);
+				printf(" (");
 				type_print(left);
-				printf("\n");
+				printf(")\n");
 				type_error_count++;
 			}
-			return type_create(TYPE_INTEGER,0,0,0);
+			return left;
 		case EXPR_AND:
 		case EXPR_OR:
 			if(left->kind != TYPE_BOOLEAN || right->kind != TYPE_BOOLEAN) {
@@ -273,7 +319,7 @@ struct type *expr_typecheck(struct expr *e) {
 				printf("\n");
 				type_error_count++;
 			}
-			return type_create(TYPE_BOOLEAN,0,0,0);
+			return left;
 		case EXPR_NOT:
 			if(left->kind != TYPE_BOOLEAN) {
 				printf("Type Error: cannot perform boolean NOT on ");
@@ -281,15 +327,19 @@ struct type *expr_typecheck(struct expr *e) {
 				printf("\n");
 				type_error_count++;
 			}
-			return type_create(TYPE_BOOLEAN,0,0,0);
+			return left;
 		case EXPR_EQ:
 		case EXPR_NE:
 			if(!type_compare(left,right) || left->kind == TYPE_ARRAY || right->kind == TYPE_ARRAY) {
 				printf("Type Error: cannot evaluate equality between ");
+				expr_print(e->left);
+				printf(" (");
 				type_print(left);
-				printf(" and ");
+				printf(") and ");
+				expr_print(e->right);
+				printf(" (");
 				type_print(right);
-				printf("\n");
+				printf(")\n");
 				type_error_count++;
 			}
 			return type_create(TYPE_BOOLEAN,0,0,0);
@@ -299,11 +349,11 @@ struct type *expr_typecheck(struct expr *e) {
 			return left;
 		case EXPR_ARRAY_DEREF:
 			if(left->kind != TYPE_ARRAY || right->kind != TYPE_INTEGER) {
-				printf("Type Error: cannot dereference an array using ");
-				type_print(left);
-				printf("[");
+				printf("Type Error: cannot dereference an array %s using ",e->left->name);
+				expr_print(e->right);
+				printf(" (");
 				type_print(right);
-				printf("]\n");
+				printf(")\n");
 				type_error_count++;
 			}
 			return left->subtype;
