@@ -1,9 +1,6 @@
-y: integer = 4;
+x: integer = 1;
+y: integer = x;
 
-this: function void () = {
-	x: char = '\n';
-	x = 3;
-	y:string = 4;
-	y = 4;
-	return;
+main: function void () = {
+	return 1;
 }

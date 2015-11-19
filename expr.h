@@ -60,7 +60,6 @@ void expr_print(struct expr *e);
 void expr_pretty_print(struct expr *e);
 
 void expr_resolve(struct expr *e);
-void expr_delete(struct expr *e);
 
 int expr_is_constant(struct expr *e);
 struct type *expr_typecheck(struct expr *e);

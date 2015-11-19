@@ -2,6 +2,8 @@
 #include "stmt.h"
 #include "scope.h"
 
+extern int type_error_count;
+
 struct stmt *stmt_create(stmt_kind_t kind, struct decl *d, struct expr *init_expr, struct expr *e, struct expr *next_expr, struct stmt *body, struct stmt *else_body) {
 	struct stmt *stmt = malloc(sizeof(struct stmt));
 	stmt -> kind = kind;
@@ -116,5 +118,39 @@ void stmt_resolve(struct stmt *s) {
 }
 
 void stmt_typecheck(struct stmt *s) {
-	
+	if(!s)
+		return;
+	printf("STMT_TYPECHECK\n");
+	struct type *expr_type = 0;
+	switch(s->kind) {
+		case STMT_DECL:
+			decl_typecheck(s->decl);
+			break;
+		case STMT_EXPR:
+			expr_typecheck(s->expr);
+			break;
+		case STMT_IF_ELSE:
+			expr_type = expr_typecheck(s->expr);
+			if(expr_type->kind != TYPE_BOOLEAN) {
+				printf("Type Error: cannot use ");
+				type_print(expr_type);
+				printf(" in an if statement\n");
+				type_error_count++;
+			}
+			stmt_typecheck(s->body);
+			stmt_typecheck(s->else_body);
+			break;
+		case STMT_FOR:
+			expr_typecheck(s->init_expr);
+			expr_typecheck(s->expr);
+			expr_typecheck(s->next_expr);
+		case STMT_PRINT:
+			expr_typecheck(s->expr);
+		case STMT_RETURN:
+			expr_typecheck(s->expr);
+		case STMT_BLOCK:
+			stmt_typecheck(s->body);
+			break;
+	}
+	stmt_typecheck(s->next);
 }

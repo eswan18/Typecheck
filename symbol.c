@@ -8,9 +8,3 @@ struct symbol *symbol_create(symbol_t kind, struct type *type, char *name) {
 	symbol -> name = name;
 	return symbol;
 }
-
-void symbol_delete(struct symbol *s) {
-	type_delete(s->type);
-	free(s->name);
-	free(s);
-}

@@ -111,7 +111,7 @@ int resolve(char *filename) {
 int typecheck(char *filename) {
 	if(resolve(filename) != 0)
 		return 1;
-	//Call decl_typecheck
+	decl_typecheck(parser_result);
 	if(type_error_count > 0)
 		return 1;
 	return 0;

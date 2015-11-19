@@ -18,6 +18,4 @@ struct symbol {
 
 struct symbol *symbol_create(symbol_t kind, struct type *type, char *name);
 
-void symbol_delete(struct symbol *s);
-
 #endif
