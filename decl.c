@@ -78,16 +78,46 @@ void decl_typecheck(struct decl *d) {
 	if(!d)
 		return;
 	if(d->value) {
-		struct type *value_type = expr_typecheck(d->value);
-		if(!type_compare(d->type,value_type)) {
-			printf("Type Error: cannot assign ");
-			expr_print(d->value);
-			printf(" (");
-			type_print(value_type);
-			printf(") to variable %s (",d->name);
-			type_print(d->type);
-			printf(") \n");
-			type_error_count++;
+		if(d->type->kind == TYPE_ARRAY) {
+			struct type *right = expr_typecheck(d->value);
+			if(right->kind == TYPE_ARRAY) {
+				//if the right side is a symbol of an array, check subtypes
+				if(!type_compare(right->subtype,d->type->subtype)) {
+					printf("Type Error: cannot assign array of type ");
+					type_print(right->subtype);
+					printf(" to array of type ");
+					type_print(d->type->subtype);
+					type_error_count++;
+				}
+			} else {
+				//if the right side is an expr list, check each element
+				struct expr *e_right = d->value;
+				while(e_right) {
+					if(!type_compare(d->type->subtype,expr_typecheck(e_right->left))) {
+						printf("Type Error: cannot assign element ");
+						expr_print(e_right->left);
+						printf(" (");
+						type_print(expr_typecheck(e_right->left));
+						printf(") to array %s of subtype ",d->name);
+						type_print(d->type->subtype);
+						printf("\n");
+						type_error_count++;
+					}
+					e_right = e_right -> right;
+				}
+			}
+		} else {
+			struct type *value_type = expr_typecheck(d->value);
+			if(!type_compare(d->type,value_type)) {
+				printf("Type Error: cannot assign ");
+				expr_print(d->value);
+				printf(" (");
+				type_print(value_type);
+				printf(") to variable %s (",d->name);
+				type_print(d->type);
+				printf(") \n");
+				type_error_count++;
+			}
 		}
 	}
 	if(d->symbol && d->symbol->kind == SYMBOL_GLOBAL) {
