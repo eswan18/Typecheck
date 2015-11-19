@@ -81,46 +81,46 @@ void stmt_print(struct stmt *s, int indent) {
 	stmt_print(s->next,indent);
 }
 
-void stmt_resolve(struct stmt *s) {
+void stmt_resolve(struct stmt *s, int should_print) {
 	if(!s)
 		return;
 	switch(s->kind) {
 		case STMT_DECL:
-			decl_resolve(s->decl);
+			decl_resolve(s->decl, should_print);
 			break;
 		case STMT_IF_ELSE:
-			expr_resolve(s->expr);
-			stmt_resolve(s->body);
-			stmt_resolve(s->else_body);
+			expr_resolve(s->expr, should_print);
+			stmt_resolve(s->body, should_print);
+			stmt_resolve(s->else_body, should_print);
 			break;
 		case STMT_BLOCK:
 			scope_enter();
-			stmt_resolve(s->body);
+			stmt_resolve(s->body, should_print);
 			scope_exit();
 			break;
 		case STMT_FOR:
-			expr_resolve(s->init_expr);
-			expr_resolve(s->expr);
-			expr_resolve(s->next_expr);
-			stmt_resolve(s->body);
+			expr_resolve(s->init_expr, should_print);
+			expr_resolve(s->expr, should_print);
+			expr_resolve(s->next_expr, should_print);
+			stmt_resolve(s->body, should_print);
 			break;
 		case STMT_PRINT:
-			expr_resolve(s->expr);
+			expr_resolve(s->expr, should_print);
 			break;
 		case STMT_RETURN:
-			expr_resolve(s->expr);
+			expr_resolve(s->expr, should_print);
 			break;
 		case STMT_EXPR:
-			expr_resolve(s->expr);
+			expr_resolve(s->expr, should_print);
 			break;
 	}
-	stmt_resolve(s->next);
+	stmt_resolve(s->next, should_print);
 }
 
 void stmt_typecheck(struct stmt *s) {
 	if(!s)
 		return;
-	printf("STMT_TYPECHECK\n");
+	//printf("STMT_TYPECHECK\n");
 	struct type *expr_type = 0;
 	switch(s->kind) {
 		case STMT_DECL:

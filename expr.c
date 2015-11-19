@@ -157,28 +157,30 @@ void expr_pretty_print(struct expr *e) {
 	}
 }
 
-void expr_resolve(struct expr *e) {
+void expr_resolve(struct expr *e, int should_print) {
 	if(!e)
 		return;
-	expr_resolve(e->left);
-	expr_resolve(e->right);
+	expr_resolve(e->left, should_print);
+	expr_resolve(e->right, should_print);
 	if(e->kind == EXPR_NAME) {
 		struct symbol *s = scope_lookup(e->name);
 		if(s) {
 			e->symbol = s;
-			printf("%s resolves to ",e->name);
-			switch(s->kind) {
-				case SYMBOL_LOCAL:
-					printf("local %d\n",s->which);
-					break;
-				case SYMBOL_GLOBAL:
-					printf("global %s\n",s->name);
-					break;
-				case SYMBOL_PARAM:
-					printf("parameter %d\n",s->which);
-					break;
-				default:
-					printf("SHOULDN'T DEFAULT\n");
+			if(should_print) {
+				printf("%s resolves to ",e->name);
+				switch(s->kind) {
+					case SYMBOL_LOCAL:
+						printf("local %d\n",s->which);
+						break;
+					case SYMBOL_GLOBAL:
+						printf("global %s\n",s->name);
+						break;
+					case SYMBOL_PARAM:
+						printf("parameter %d\n",s->which);
+						break;
+					default:
+						printf("SHOULDN'T DEFAULT\n");
+				}
 			}
 		} else {
 			printf("Variable %s is undefined\n",e->name);
@@ -196,7 +198,7 @@ int expr_is_constant(struct expr *e) {
 struct type *expr_typecheck(struct expr *e) {
 	if(!e)
 		return type_create(TYPE_VOID,0,0,0);
-	printf("EXPR_TYPECHECK\n");
+	//printf("EXPR_TYPECHECK\n");
 	struct type *left = 0;
 	struct type *right = 0;
 	left = expr_typecheck(e->left);
@@ -220,10 +222,14 @@ struct type *expr_typecheck(struct expr *e) {
 		case EXPR_EXPON:
 			if(left->kind != TYPE_INTEGER || right->kind != TYPE_INTEGER) {
 				printf("Type Error: cannot perform integer math on ");
+				expr_print(e->left);
+				printf(" (");
 				type_print(left);
-				printf(" and ");
+				printf(") and ");
+				expr_print(e->right);
+				printf(" (");
 				type_print(right);
-				printf("\n");
+				printf(")\n");
 				type_error_count++;
 			}
 			return type_create(TYPE_INTEGER,0,0,0);
@@ -288,7 +294,7 @@ struct type *expr_typecheck(struct expr *e) {
 			}
 			return type_create(TYPE_BOOLEAN,0,0,0);
 		case EXPR_FUNC:
-			return left;
+			return left->subtype;
 		case EXPR_LIST:
 			return left;
 		case EXPR_ARRAY_DEREF:

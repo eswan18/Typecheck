@@ -44,7 +44,7 @@ void decl_print(struct decl *d, int indent) {
 	decl_print(d->next,indent);
 }
 
-void decl_resolve(struct decl *d) {
+void decl_resolve(struct decl *d, int should_print) {
 	if (!d)
 		return;
 	//Check if the name is already defined in the local scope
@@ -63,21 +63,20 @@ void decl_resolve(struct decl *d) {
 	//Bind it and resolve internal expressions
 	scope_bind(d->name, symbol);
 	d->symbol = symbol;
-	expr_resolve(d->value);
+	expr_resolve(d->value, should_print);
 	//If it's a function, enter a new scope and resolve the internal statement
 	if (d->code) {
 		scope_enter();
-		param_list_resolve(d->type->params);
-		stmt_resolve(d->code);
+		param_list_resolve(d->type->params, should_print);
+		stmt_resolve(d->code, should_print);
 		scope_exit();
 	}
-	decl_resolve(d->next);
+	decl_resolve(d->next, should_print);
 }
 
 void decl_typecheck(struct decl *d) {
 	if(!d)
 		return;
-	printf("DECL_TYPECHECK\n");
 	if(d->value) {
 		struct type *value_type = expr_typecheck(d->value);
 		if(!type_compare(d->type,value_type)) {
@@ -91,7 +90,7 @@ void decl_typecheck(struct decl *d) {
 	}
 	if(d->symbol && d->symbol->kind == SYMBOL_GLOBAL) {
 		if(d->value && !expr_is_constant(d->value)) {
-			printf("Type Error: global variables can only be assigned constant values\n");
+			printf("Type Error: global variable %s may only be assigned a literal value\n",d->name);
 			type_error_count++;
 		}
 	}

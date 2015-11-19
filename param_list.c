@@ -24,7 +24,7 @@ void param_list_print(struct param_list *a) {
 	param_list_print(a->next);
 }
 
-void param_list_resolve(struct param_list *a) {
+void param_list_resolve(struct param_list *a, int should_print) {
 	if (!a)
 		return;
 	//Check if the name is already defined in the local scope
@@ -37,5 +37,5 @@ void param_list_resolve(struct param_list *a) {
 	symbol->which = scope_symbol_count(SYMBOL_PARAM)+1;
 	scope_bind(a->name,symbol);
 		
-	param_list_resolve(a->next);
+	param_list_resolve(a->next, should_print);
 }

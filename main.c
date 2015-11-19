@@ -17,7 +17,7 @@ extern struct scope_table *global_scope_table;
 
 int scan(char *filename);
 int parse(char *filename);
-int resolve(char *filename);
+int resolve(char *filename, int should_print);
 int typecheck(char *filename);
 
 int main(int argc, char *argv[]) {
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(option,"-parse") == 0 || strcmp(option,"-print") == 0) {
 		return parse(filename);
 	} else if (strcmp(option,"-resolve") == 0) {
-		return resolve(filename);
+		return resolve(filename,1);
 	} else if (strcmp(option,"-typecheck") == 0) {
 		return typecheck(filename);
 	} else {
@@ -87,7 +87,7 @@ int parse(char *filename) {
 	return 1;
 }
 
-int resolve(char *filename) {
+int resolve(char *filename, int should_print) {
 	yyin = fopen(filename,"r");
 	if (!yyin) {
 		fprintf(stderr,"unable to open %s\n",filename);
@@ -100,7 +100,7 @@ int resolve(char *filename) {
 
 	//do name resolution
 	scope_enter();
-	decl_resolve(parser_result);
+	decl_resolve(parser_result, should_print);
 	scope_exit();
 	
 	if(resolve_error_count > 0)
@@ -109,7 +109,7 @@ int resolve(char *filename) {
 }
 
 int typecheck(char *filename) {
-	if(resolve(filename) != 0)
+	if(resolve(filename,0) != 0)
 		return 1;
 	decl_typecheck(parser_result);
 	if(type_error_count > 0)

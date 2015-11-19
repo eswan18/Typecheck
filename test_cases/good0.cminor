@@ -1,5 +1,5 @@
 x: integer = 1;
-y: integer = x;
+//y: integer = x;
 
 main: function void () = {
 	return 1;

@@ -29,7 +29,7 @@ struct stmt * stmt_create(stmt_kind_t kind, struct decl *d, struct expr *init_ex
 void stmt_print(struct stmt *s, int indent);
 void stmt_pretty_print(struct stmt *s, int indent);
 
-void stmt_resolve(struct stmt *s);
+void stmt_resolve(struct stmt *s, int should_print);
 
 void stmt_typecheck(struct stmt *s);
 

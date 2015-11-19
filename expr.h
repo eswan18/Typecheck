@@ -59,7 +59,7 @@ struct expr *expr_create_string_literal(const char *str);
 void expr_print(struct expr *e);
 void expr_pretty_print(struct expr *e);
 
-void expr_resolve(struct expr *e);
+void expr_resolve(struct expr *e, int should_print);
 
 int expr_is_constant(struct expr *e);
 struct type *expr_typecheck(struct expr *e);
