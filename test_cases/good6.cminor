@@ -1,5 +1,6 @@
 other_func: function array[] integer (x: integer) = {
-	return {1,2,3,4};
+	y: array [] integer = {x,x};
+	return y; 
 }
 
 main: function integer (argc: integer, argv: array[] string) = {

@@ -1,3 +1,1 @@
-yytext: else
-parse error: syntax error
-Parse Failed!
+Type Error: cannot perform integer math on x (boolean) and y (boolean)

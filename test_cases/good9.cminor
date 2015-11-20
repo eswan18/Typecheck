@@ -1,9 +1,10 @@
-printarray: function void ( a: array [] integer, size: integer ) = {
+printarray: function integer ( a: array [] integer, size: integer ) = {
 	i: integer;
 	for( i=0;i<size;i++) {
 		print a[i], "\n";
 	}
 	size = 1;
+	return size;
 }
 
 a: char = 'a';

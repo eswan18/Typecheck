@@ -4,6 +4,8 @@
 #include "symbol.h"
 #include "scope.h"
 
+struct type *return_type = 0;
+
 extern int type_error_count;
 
 struct decl *decl_create(char *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next) {
@@ -126,7 +128,10 @@ void decl_typecheck(struct decl *d) {
 			type_error_count++;
 		}
 	}
-	if(d->code)
+	if(d->code) {
+		//if it's a function, typecheck the content and record the expected return value
+		return_type = d->type->subtype;
 		stmt_typecheck(d->code);
+	}
 	decl_typecheck(d->next);
 }

@@ -1,6 +1,0 @@
-this: function void () = {
-	x: character='
-';
-
-	return;
-}

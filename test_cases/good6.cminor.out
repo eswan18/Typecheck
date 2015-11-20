@@ -1,6 +1,0 @@
-func: function integer () = {
-	x: integer=1;
-
-	x=other_func(x)*x+3;
-	return x;
-}

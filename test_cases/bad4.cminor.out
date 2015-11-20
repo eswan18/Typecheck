@@ -1,0 +1,1 @@
+Type Error: cannot return "hi" (string) to function of type integer

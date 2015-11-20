@@ -1,3 +1,1 @@
-yytext: main
-parse error: syntax error
-Parse Failed!
+Type Error: the arguments to func do not match its parameters

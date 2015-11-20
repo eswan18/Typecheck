@@ -1,3 +1,1 @@
-yytext: ,
-parse error: syntax error
-Parse Failed!
+Type Error: cannot use integer in an if statement

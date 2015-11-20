@@ -3,6 +3,7 @@
 #include "scope.h"
 
 extern int type_error_count;
+extern struct type *return_type;
 
 struct stmt *stmt_create(stmt_kind_t kind, struct decl *d, struct expr *init_expr, struct expr *e, struct expr *next_expr, struct stmt *body, struct stmt *else_body) {
 	struct stmt *stmt = malloc(sizeof(struct stmt));
@@ -144,10 +145,23 @@ void stmt_typecheck(struct stmt *s) {
 			expr_typecheck(s->init_expr);
 			expr_typecheck(s->expr);
 			expr_typecheck(s->next_expr);
+			break;
 		case STMT_PRINT:
 			expr_typecheck(s->expr);
+			break;
 		case STMT_RETURN:
-			expr_typecheck(s->expr);
+			expr_type = expr_typecheck(s->expr);
+			if(!type_compare(expr_type,return_type)) {
+				printf("Type Error: cannot return ");
+				expr_print(s->expr);
+				printf(" (");
+				type_print(expr_type);
+				printf(") to function of type ");
+				type_print(return_type);
+				printf("\n");
+				type_error_count++;
+			}
+			break;
 		case STMT_BLOCK:
 			stmt_typecheck(s->body);
 			break;
