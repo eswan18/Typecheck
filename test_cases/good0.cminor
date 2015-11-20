@@ -5,5 +5,5 @@ main: function integer () = {
 	y: array [] integer = {1,2,4,5};
 	z: array[4] integer;
 	j: integer = y[4];
-	return 1;
+	return main();
 }

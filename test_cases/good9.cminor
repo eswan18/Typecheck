@@ -10,7 +10,8 @@ a: char = 'a';
 str: string = "string";
 
 main: function integer (argc: integer, argv: array[] string) = {
-	ints: array[] integer = {1,2,3,main(1,{"hi"})};
+	strings: array [] string = {"hi"};
+	ints: array[] integer = {1,2,3,main(1,strings)};
 	if(argc >= 1 && argv[0] != str)
 		return 0;
 	else

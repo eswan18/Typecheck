@@ -63,5 +63,6 @@ void expr_resolve(struct expr *e, int should_print);
 
 int expr_is_constant(struct expr *e);
 struct type *expr_typecheck(struct expr *e);
+int expr_check_args_params(struct expr *e);
 
 #endif

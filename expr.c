@@ -353,6 +353,19 @@ struct type *expr_typecheck(struct expr *e) {
 			}
 			return type_create(TYPE_BOOLEAN,0,0,0);
 		case EXPR_FUNC:
+			//check arguments
+			if(e->left->kind != EXPR_NAME) {
+				printf("Type Error: cannot use function notation on ");
+				expr_print(e->left);
+				printf(" (");
+				type_print(left);
+				printf(")\n");
+				type_error_count++;
+			}
+			if(!expr_check_args_params(e)) {
+				printf("Type Error: the arguments to %s do not match its parameters\n",e->left->name);
+				type_error_count++;
+			}
 			return left->subtype;
 		case EXPR_LIST:
 			return left;
@@ -390,4 +403,19 @@ struct type *expr_typecheck(struct expr *e) {
 			exit(1);
 	}
 	return 0;
+}
+
+int expr_check_args_params(struct expr *e) {
+	struct param_list *current_param = expr_typecheck(e->left)->params;
+	struct expr *current_arg_parent = e->right;
+	while(current_arg_parent || current_param) {
+		if(!current_arg_parent || !current_param) {
+			return 0;
+		}
+		if(!type_compare(expr_typecheck(current_arg_parent->left),current_param->type))
+			return 0;
+		current_arg_parent = current_arg_parent->right;
+		current_param = current_param->next;
+	}
+	return 1;
 }
