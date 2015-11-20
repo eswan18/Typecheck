@@ -1,6 +1,12 @@
-main: function integer (argv: array [] string, argc: integer) = {
-	i: integer = 0;
+i: integer = 0;
+
+main: function integer (argc: integer, argv: array [] string) = {
 	j: integer = 1;
+	if(argc > 5) {
+		print "this is out of hand";
+		if(argv[1] == argv[2])
+			print "Never repeat yourself, this is coding";
+	}
 	if(i == j) {
 		print i;
 		return j;

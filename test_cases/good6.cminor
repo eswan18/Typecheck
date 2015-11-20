@@ -1,9 +1,9 @@
-other_func: function integer (x: integer) = {
-	return x;
+other_func: function array[] integer (x: integer) = {
+	return {1,2,3,4};
 }
 
-func: function integer () = {
+main: function integer (argc: integer, argv: array[] string) = {
 	x: integer = 1;
-	x = other_func(x) * x + 3;
+	x = other_func(x)[1] * x + 3;
 	return x;
 }

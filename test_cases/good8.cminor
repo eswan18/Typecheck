@@ -1,4 +1,4 @@
-main: function integer () = {
+main: function integer() = {
 	if (3 != 3)
 		print "Wow this is scary";
 	if (0 > 1)
@@ -7,5 +7,7 @@ main: function integer () = {
 		print "The laws of math have lost their meaning";
 		return 1;
 	}
+	b: integer = 4;
+	a: array [] integer = {1,2,2*4,b,main()};
 	return 0;
 }

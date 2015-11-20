@@ -4,9 +4,15 @@ printarray: function void ( a: array [] integer, size: integer ) = {
 		print a[i], "\n";
 	}
 	size = 1;
-	a[3] = call(a[2]) + call(1,2,run12);
 }
 
 a: char = 'a';
 str: string = "string";
-impossible: integer = str + a;
+
+main: function integer (argc: integer, argv: array[] string) = {
+	ints: array[] integer = {1,2,3,main(1,{"hi"})};
+	if(argc >= 1 && argv[0] != str)
+		return 0;
+	else
+		return printarray(ints,argc);
+}

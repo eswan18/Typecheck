@@ -1,1 +1,14 @@
-x:	integer = (function_call(4 % 3 + 2, 45));
+function_call: function string (a: array [] string) = {
+	if(a[1] != a[2])
+		return a[0];
+	else
+		return a[1];
+	x: string = function_call({"hi","hey"});
+}
+
+main: function integer(argc: integer, argv: array [] string) = {
+	if(function_call({"hi","hey"}) == "hi")
+		return 1;
+	else
+		return 0;
+}

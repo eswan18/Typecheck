@@ -182,7 +182,7 @@ expr: expr assign and_expr {
 }
 
 and_expr: and_expr and compare_expr {
-	$$ = expr_create(EXPR_ADD,$1,$3);
+	$$ = expr_create(EXPR_AND,$1,$3);
 }
 	| and_expr or compare_expr {
 	$$ = expr_create(EXPR_OR,$1,$3);
@@ -320,9 +320,8 @@ primary_expr: identifier {
 	| left_brace not_empty_expr_list right_brace {
 	$$ = $2;
 }
-	| identifier left_bracket expr right_bracket {
-	struct expr *id = expr_create_name($1);
-	$$ = expr_create(EXPR_ARRAY_DEREF,id,$3);
+	| primary_expr left_bracket expr right_bracket {
+	$$ = expr_create(EXPR_ARRAY_DEREF,$1,$3);
 }
 	;
 

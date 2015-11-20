@@ -4,3 +4,10 @@ if( x<1 ) { return 0; } else {
 if(x<2) { return 1; } else {
 return fib(x-1) + fib(x-2); // recursive step
 } }}
+
+main: function integer ( argc: integer, argv: array[] string) = {
+	str: string = "hey";
+	y: integer = fib(1,str);
+	z: integer = fib(2,str);
+	return z + y;
+}

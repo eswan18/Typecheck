@@ -192,6 +192,15 @@ void expr_resolve(struct expr *e, int should_print) {
 int expr_is_constant(struct expr *e) {
 	if(e->kind == EXPR_BOOLEAN_LITERAL || e->kind == EXPR_INTEGER_LITERAL || e->kind == EXPR_CHARACTER_LITERAL || e->kind == EXPR_STRING_LITERAL)
 		return 1;
+	if(e->kind == EXPR_LIST) {
+		struct expr *e_right = e;
+		while(e_right) {
+			if(!expr_is_constant(e_right->left))
+				return 0;
+			e_right = e_right->right;
+		}
+		return 1;
+	}
 	return 0;
 }
 
@@ -348,8 +357,17 @@ struct type *expr_typecheck(struct expr *e) {
 		case EXPR_LIST:
 			return left;
 		case EXPR_ARRAY_DEREF:
-			if(left->kind != TYPE_ARRAY || right->kind != TYPE_INTEGER) {
-				printf("Type Error: cannot dereference an array %s using ",e->left->name);
+			if(left->kind != TYPE_ARRAY) {
+				printf("Type Error: cannot dereference ");
+				expr_print(e->left);
+				printf(" (");
+				type_print(left);
+				printf(")\n");
+				return type_create(TYPE_VOID,0,0,0);
+			} else if(right->kind != TYPE_INTEGER) {
+				printf("Type Error: cannot dereference array ");
+				expr_print(e->left);
+				printf(" using ");
 				expr_print(e->right);
 				printf(" (");
 				type_print(right);

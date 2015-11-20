@@ -5,10 +5,12 @@
 extend over
 multiple lines */
 
-main: function integer (argv: array [] string, argc: integer) = {
-	i: integer;
+main: function integer (argc: integer, argv: array [] string)  = {
+	i: integer = argc;
 	for(i=0;i<40;i++) {
 		print i;
 	}
+	if(argv[0] == "cminor")
+		print "that's what I thought";
 	return 0;
 }
