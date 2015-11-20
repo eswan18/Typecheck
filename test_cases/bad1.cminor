@@ -1,7 +1,6 @@
 global: integer = 345;
 
 main: function integer () = {
-	if x
-		print "hi";
+	local: string = global;
 	return 0;
 }

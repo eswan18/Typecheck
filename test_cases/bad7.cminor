@@ -1,0 +1,7 @@
+main:function integer (argc: integer, argv: array[] string) = {
+	x:integer = 4;
+	y: string = "hi";
+	if(x != y)
+		return 0;
+	return 1;
+}

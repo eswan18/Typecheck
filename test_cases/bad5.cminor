@@ -1,6 +1,11 @@
-func(3, 4, 5, 10000);
-
 func: function void (one: integer, two: integer, three: integer, four: integer) = {
 	one++;
 	one + two % three / four;
+	x: array[] string = {"hi","hey"};
+	four = main(1,x);
+	return;
+}
+
+main: function integer(argc: integer, argv: array[] string) = {
+	return 1;
 }

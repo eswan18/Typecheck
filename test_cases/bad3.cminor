@@ -1,4 +1,9 @@
-int main (int argc, char argv) {
-	//c code
-	return (0);
+func: function void (x: integer, y: string) = {
+	x++;
+	print y;
+	return;
+}
+
+main: function integer (argc: integer, argv: array [] string) = {
+	func("hey","hi");
 }

@@ -1,4 +1,9 @@
+func: function void () = {
+	print "func";
+	return;
+}
+
 main: function integer () = {
-	for: char = 'a';
-	return for;
+	a: char = func();
+	return 0;
 }
