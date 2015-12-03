@@ -1,1 +1,2 @@
-Type Error: cannot perform integer math on x (boolean) and y (boolean)
+yytext: ;
+parse error: syntax error

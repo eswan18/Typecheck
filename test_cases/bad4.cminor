@@ -1,3 +1,7 @@
-main: function integer (argc:integer, argv:array[]string) = {
-	return "hi";
+//test fxn return types
+main:function integer ()=
+{
+
+	return 'c'
+
 }

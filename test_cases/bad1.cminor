@@ -1,6 +1,3 @@
-global: integer = 345;
+// global variable assignments
+x: integer = 'c';
 
-main: function integer () = {
-	local: string = global;
-	return 0;
-}

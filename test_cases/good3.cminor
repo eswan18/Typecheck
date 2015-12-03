@@ -1,16 +1,21 @@
-//Some C++ Comments
-//Nothing too tricky
-/* and on to C style comments */
-/* which can
-extend over
-multiple lines */
-
-main: function integer (argc: integer, argv: array [] string)  = {
-	i: integer = argc;
-	for(i=0;i<40;i++) {
-		print i;
+// test resolving multiple layers of depth
+x:integer = 5;
+y:integer = 10;
+main:function void ()=
+{
+	x:integer = 5;
+	y:integer = 10;
+	{
+		
+		x:integer = 5;
+		y:integer = 10;
+		{
+			
+			x:char = 'a';
+			y:integer = 10;
+		}
+		y = x + y;
 	}
-	if(argv[0] == "cminor")
-		print "that's what I thought";
-	return 0;
 }
+	
+

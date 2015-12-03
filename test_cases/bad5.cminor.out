@@ -1,1 +1,1 @@
-Variable main is undefined
+Type Error: cannot perform boolean logic on boolean and character

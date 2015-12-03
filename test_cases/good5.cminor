@@ -1,18 +1,43 @@
-/* Display fibonnaci numbers from 0 to 45. */
-fib: function integer ( x: integer, y: string ) = {
-if( x<1 ) { return 0; } else {
-if(x<2) { return 1; } else {
-return fib(x-1,"hi") + fib(x-2,"hey"); // recursive step
-} }}
+// test character comparisions/headers
+intFxn: function integer(c:char);
+glob:integer = 1;
 
-fib2: function void (x:integer) = {
-	print "hey";
+main:function void ()=
+{
+c:integer;
+	if(6 == intFxn('c'))
+	{
+		print "unreachable";
+	}
+	if(5 >= 5)
+	{
+		print "unreachable";
+	}
+	if(c > 5)
+	{
+		print "unreachable";
+	}
+	if(c >= 5)
+	{
+		print "unreachable";
+	}
+	if(intFxn('a') <= 5)
+	{
+		print "reachable";
+	}
+	if(glob < 5)
+	{
+		print "reachable";
+	}
+	
+
+}
+intFxn: function integer(c:char)=
+{
+	if(c == 'a')
+	{
+		return 5;
+	}
+	return 0;
 }
 
-main: function integer ( argc: integer, argv: array[] string) = {
-	str: string = "hey";
-	y: integer = fib(1,str);
-	z: integer = fib(2,str);
-	fib2(y);
-	return z + y;
-}

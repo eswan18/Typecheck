@@ -1,15 +1,26 @@
-i: integer = 0;
-
-main: function integer (argc: integer, argv: array [] string) = {
-	j: integer = 1;
-	if(argc > 5) {
-		print "this is out of hand";
-		if(argv[1] == argv[2])
-			print "Never repeat yourself, this is coding";
+// test character comparisions/headers
+charFxn: function char(x:char)=
+{
+	if(x == 'a')
+	{
+		return 'z';
 	}
-	if(i == j) {
-		print i;
-		return j;
-	}
-	return i;
 }
+main:function void ()=
+{
+c:char;
+	if('a' == charFxn('c'))
+	{
+		print "unreachable";
+	}
+	if('a' != 'a')
+	{
+		print "unreachable";
+	}
+	if(c == 'a')
+	{
+		print "unreachable";
+	}
+
+}
+

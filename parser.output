@@ -83,7 +83,7 @@
   62               | false
   63               | left_paren expr right_paren
   64               | left_brace not_empty_expr_list right_brace
-  65               | identifier left_bracket expr right_bracket
+  65               | primary_expr left_bracket expr right_bracket
 
   66  type : integer
   67       | void
@@ -707,7 +707,9 @@ state 48
 	incr_expr : primary_expr . increment  (47)
 	incr_expr : primary_expr . decrement  (48)
 	incr_expr : primary_expr .  (49)
+	primary_expr : primary_expr . left_bracket expr right_bracket  (65)
 
+	TOKEN_LEFT_BRACKET  shift 28
 	TOKEN_INCREMENT  shift 92
 	TOKEN_DECREMENT  shift 93
 	TOKEN_RIGHT_BRACE  reduce 49
@@ -733,17 +735,17 @@ state 48
 
 	increment  goto 94
 	decrement  goto 95
+	left_bracket  goto 96
 
 
 state 49
 	primary_expr : identifier .  (56)
 	primary_expr : identifier . left_paren expr_list right_paren  (57)
-	primary_expr : identifier . left_bracket expr right_bracket  (65)
 
 	TOKEN_LEFT_PAREN  shift 32
-	TOKEN_LEFT_BRACKET  shift 28
 	TOKEN_RIGHT_BRACE  reduce 56
 	TOKEN_RIGHT_PAREN  reduce 56
+	TOKEN_LEFT_BRACKET  reduce 56
 	TOKEN_RIGHT_BRACKET  reduce 56
 	TOKEN_GE  reduce 56
 	TOKEN_LE  reduce 56
@@ -765,8 +767,7 @@ state 49
 	TOKEN_COMMA  reduce 56
 	TOKEN_SEMICOLON  reduce 56
 
-	left_paren  goto 96
-	left_bracket  goto 97
+	left_paren  goto 97
 
 
 state 50
@@ -1607,6 +1608,42 @@ state 95
 
 
 state 96
+	primary_expr : primary_expr left_bracket . expr right_bracket  (65)
+
+	TOKEN_LEFT_BRACE  shift 31
+	TOKEN_LEFT_PAREN  shift 32
+	TOKEN_NOT  shift 33
+	TOKEN_SUBTRACT  shift 34
+	TOKEN_TRUE  shift 35
+	TOKEN_FALSE  shift 36
+	TOKEN_CHAR_LITERAL  shift 37
+	TOKEN_INTEGER_LITERAL  shift 38
+	TOKEN_STRING_LITERAL  shift 39
+	TOKEN_IDENTIFIER  shift 1
+	.  error
+
+	expr  goto 141
+	and_expr  goto 41
+	compare_expr  goto 42
+	add_expr  goto 43
+	mul_expr  goto 44
+	expon_expr  goto 45
+	neg_expr  goto 46
+	incr_expr  goto 47
+	primary_expr  goto 48
+	identifier  goto 49
+	string_literal  goto 50
+	integer_literal  goto 51
+	char_literal  goto 52
+	left_brace  goto 61
+	left_paren  goto 54
+	subtract  goto 55
+	not  goto 56
+	true  goto 57
+	false  goto 58
+
+
+state 97
 	primary_expr : identifier left_paren . expr_list right_paren  (57)
 	expr_list : .  (53)
 
@@ -1630,44 +1667,8 @@ state 96
 	expon_expr  goto 45
 	neg_expr  goto 46
 	incr_expr  goto 47
-	expr_list  goto 141
-	not_empty_expr_list  goto 142
-	primary_expr  goto 48
-	identifier  goto 49
-	string_literal  goto 50
-	integer_literal  goto 51
-	char_literal  goto 52
-	left_brace  goto 61
-	left_paren  goto 54
-	subtract  goto 55
-	not  goto 56
-	true  goto 57
-	false  goto 58
-
-
-state 97
-	primary_expr : identifier left_bracket . expr right_bracket  (65)
-
-	TOKEN_LEFT_BRACE  shift 31
-	TOKEN_LEFT_PAREN  shift 32
-	TOKEN_NOT  shift 33
-	TOKEN_SUBTRACT  shift 34
-	TOKEN_TRUE  shift 35
-	TOKEN_FALSE  shift 36
-	TOKEN_CHAR_LITERAL  shift 37
-	TOKEN_INTEGER_LITERAL  shift 38
-	TOKEN_STRING_LITERAL  shift 39
-	TOKEN_IDENTIFIER  shift 1
-	.  error
-
-	expr  goto 143
-	and_expr  goto 41
-	compare_expr  goto 42
-	add_expr  goto 43
-	mul_expr  goto 44
-	expon_expr  goto 45
-	neg_expr  goto 46
-	incr_expr  goto 47
+	expr_list  goto 142
+	not_empty_expr_list  goto 143
 	primary_expr  goto 48
 	identifier  goto 49
 	string_literal  goto 50
@@ -1819,12 +1820,11 @@ state 110
 	decl : identifier . colon type assign left_brace stmt_list right_brace  (6)
 	primary_expr : identifier .  (56)
 	primary_expr : identifier . left_paren expr_list right_paren  (57)
-	primary_expr : identifier . left_bracket expr right_bracket  (65)
 
 	TOKEN_LEFT_PAREN  shift 32
-	TOKEN_LEFT_BRACKET  shift 28
 	TOKEN_COLON  shift 7
 	TOKEN_RIGHT_BRACE  reduce 56
+	TOKEN_LEFT_BRACKET  reduce 56
 	TOKEN_GE  reduce 56
 	TOKEN_LE  reduce 56
 	TOKEN_EQ  reduce 56
@@ -1846,8 +1846,7 @@ state 110
 	TOKEN_SEMICOLON  reduce 56
 
 	colon  goto 8
-	left_paren  goto 96
-	left_bracket  goto 97
+	left_paren  goto 97
 
 
 state 111
@@ -1966,7 +1965,7 @@ state 113
 	neg_expr  goto 46
 	incr_expr  goto 47
 	expr_list  goto 154
-	not_empty_expr_list  goto 142
+	not_empty_expr_list  goto 143
 	primary_expr  goto 48
 	identifier  goto 49
 	string_literal  goto 50
@@ -2339,30 +2338,30 @@ state 140
 
 
 state 141
-	primary_expr : identifier left_paren expr_list . right_paren  (57)
-
-	TOKEN_RIGHT_PAREN  shift 157
-	.  error
-
-	right_paren  goto 163
-
-
-state 142
-	expr_list : not_empty_expr_list .  (52)
-
-	.  reduce 52
-
-
-state 143
 	expr : expr . assign and_expr  (23)
-	primary_expr : identifier left_bracket expr . right_bracket  (65)
+	primary_expr : primary_expr left_bracket expr . right_bracket  (65)
 
 	TOKEN_RIGHT_BRACKET  shift 119
 	TOKEN_ASSIGN  shift 24
 	.  error
 
 	assign  goto 63
-	right_bracket  goto 164
+	right_bracket  goto 163
+
+
+state 142
+	primary_expr : identifier left_paren expr_list . right_paren  (57)
+
+	TOKEN_RIGHT_PAREN  shift 157
+	.  error
+
+	right_paren  goto 164
+
+
+state 143
+	expr_list : not_empty_expr_list .  (52)
+
+	.  reduce 52
 
 
 state 144
@@ -2612,15 +2611,15 @@ state 162
 
 
 state 163
-	primary_expr : identifier left_paren expr_list right_paren .  (57)
+	primary_expr : primary_expr left_bracket expr right_bracket .  (65)
 
-	.  reduce 57
+	.  reduce 65
 
 
 state 164
-	primary_expr : identifier left_bracket expr right_bracket .  (65)
+	primary_expr : identifier left_paren expr_list right_paren .  (57)
 
-	.  reduce 65
+	.  reduce 57
 
 
 state 165

@@ -1,6 +1,14 @@
-x: integer = 4;
-
-main: function integer ( argc: integer, argv: array [] string) = {
-	x:integer = 5;
-	return x;
+// assign integer expression to local variable/ typechecking
+x:integer = 5;
+y:integer = 10;
+test:function integer();
+main:function void ()=
+{
+	x:integer = y * 10 + 15 - test();
 }
+test:function integer () =
+{
+	return 5;
+}
+	
+

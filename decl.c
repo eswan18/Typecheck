@@ -51,8 +51,17 @@ void decl_resolve(struct decl *d, int should_print) {
 		return;
 	//Check if the name is already defined in the local scope
 	if (scope_lookup_local(d->name)) {
-		fprintf(stderr,"Error: variable %s already defined in current scope\n",d->name);
-		exit(1);
+		if(!d->code) {
+			fprintf(stderr,"Error: variable %s already defined in current scope\n",d->name);
+			exit(1);
+		} else {
+			scope_enter();
+			param_list_resolve(d->type->params, should_print);
+			stmt_resolve(d->code, should_print);
+			scope_exit();
+			decl_resolve(d->next,should_print);
+			return;
+		}
 	}
 	//Create the symbol
 	struct symbol *symbol = 0;
