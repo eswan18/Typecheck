@@ -50,11 +50,25 @@ void decl_resolve(struct decl *d, int should_print) {
 	if (!d)
 		return;
 	//Check if the name is already defined in the local scope
-	if (scope_lookup_local(d->name)) {
+	struct symbol *s = scope_lookup_local(d->name);
+	if (s) {
 		if(!d->code) {
 			fprintf(stderr,"Error: variable %s already defined in current scope\n",d->name);
 			exit(1);
 		} else {
+			d->symbol = s;
+			if(should_print) {
+				printf("%s resolves to ",d->name);
+				switch(s->kind) {
+					case SYMBOL_GLOBAL:
+						printf("global %s\n",s->name);
+						break;
+					case SYMBOL_LOCAL:
+					case SYMBOL_PARAM:
+						fprintf(stderr,"Error: functions must be defined globally\n");
+						break;
+				}
+			}
 			scope_enter();
 			param_list_resolve(d->type->params, should_print);
 			stmt_resolve(d->code, should_print);
@@ -88,6 +102,14 @@ void decl_resolve(struct decl *d, int should_print) {
 void decl_typecheck(struct decl *d) {
 	if(!d)
 		return;
+	if(d->type->kind == TYPE_FUNCTION) {
+		if(!type_compare(d->type,d->symbol->type)) {
+			printf("Type Error: function %s should have a type of ",d->name);
+			type_print(d->symbol->type);
+			printf("\n");
+			type_error_count++;
+		}
+	}
 	if(d->value) {
 		if(d->type->kind == TYPE_ARRAY) {
 			struct type *right = expr_typecheck(d->value);

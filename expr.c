@@ -179,7 +179,7 @@ void expr_resolve(struct expr *e, int should_print) {
 						printf("parameter %d\n",s->which);
 						break;
 					default:
-						printf("SHOULDN'T DEFAULT\n");
+						fprintf(stderr,"SHOULDN'T DEFAULT\n");
 				}
 			}
 		} else {

@@ -64,10 +64,13 @@ int type_compare(struct type *a, struct type *b) {
 		return 0;
 	if(a->kind != b->kind)
 		return 0;
+	if(a->kind == TYPE_FUNCTION) {
+		if(!type_compare(a->subtype,b->subtype))
+			return 0;
+	}
 	//The following may be necessary but I'm not sure
 	/*if(a->params != b->params)
-		return 0;
-	return(type_compare(a->subtype,b->subtype));*/
+		return 0;*/
 	return 1;
 }
 
