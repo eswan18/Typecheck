@@ -1,7 +1,0 @@
-hello: function string (x: integer) = {
-	return "hi";
-}
-
-main: function integer () = {
-	return hello(0);
-}

@@ -1,9 +1,0 @@
-main: function integer (argc: integer, argv: array [] string ) = {
-	x: integer;
-	for (x=5;x<10;x++) {
-		y:integer = 5;
-		print y;
-	}
-	print y;
-	return 1;
-}
